@@ -1,18 +1,39 @@
 import { z } from "zod";
 
-export const step1Schema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.email("Please enter a valid email address"),
-  age: z.string().min(1, "Please select your age range"),
-  occupation: z.string().min(2, "Please enter your occupation"),
-});
+export const step1Schema = z
+  .object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.email("Please enter a valid email address"),
+    age: z.string().min(1, "Please select your age range"),
+    primaryRole: z.enum([
+      "developer",
+      "designer",
+      "manager",
+      "student",
+      "other",
+    ]),
+    otherRoleDescription: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (
+        data.primaryRole === "other" &&
+        (!data.otherRoleDescription ||
+          data.otherRoleDescription.trim().length === 0)
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Please describe your role",
+      path: ["otherRoleDescription"],
+    }
+  );
 
 export const step2Schema = z.object({
-  primaryRole: z.enum(["developer", "designer", "manager", "student", "other"]),
   experienceLevel: z.enum(["0-1", "2-5", "6-10", "10+"]),
-  techStack: z
-    .array(z.string())
-    .min(1, "Please select at least one technology"),
+  techStack: z.array(z.string()).optional(),
   workStyle: z.enum(["remote", "hybrid", "office", "freelance"]),
   learningPreferences: z
     .array(z.string())
