@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const step1Schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
+  email: z.email("Please enter a valid email address"),
   age: z.string().min(1, "Please select your age range"),
   occupation: z.string().min(2, "Please enter your occupation"),
 });
