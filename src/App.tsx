@@ -1,12 +1,13 @@
 import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+import Step1 from "./pages/Step1";
 import Step2 from "./pages/Step2";
 import Step3 from "./pages/Step3";
+import NotFound from "./pages/NotFound";
 import { useStepGuard } from "./hooks/useStepGuard";
 import { FormLayout } from "./components/layout/FormLayout";
-import Step1 from "./pages/Step1";
-import './App.css'
+import './App.css';
+
 function StepWrapper({ children }: { children: React.ReactNode }) {
-  // run guard on every step
   useStepGuard();
   return <FormLayout>{children}</FormLayout>;
 }
@@ -35,7 +36,7 @@ function StepRoutes() {
         </StepWrapper>
       );
     default:
-      return <Navigate to="/step/1" replace />;
+      return <NotFound />;
   }
 }
 
@@ -45,7 +46,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/step/1" replace />} />
         <Route path="/step/:step" element={<StepRoutes />} />
-        <Route path="*" element={<Navigate to="/step/1" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
