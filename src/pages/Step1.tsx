@@ -1,3 +1,4 @@
+// src/pages/Step1.tsx
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +14,7 @@ import { step1Schema, type Step1FormData } from "@/utils/validation";
 
 const Step1 = () => {
     const navigate = useNavigate();
-    const { step1, updateStep1, markStepComplete } = useFormStore();
+    const { step1, updateStep1, updateStep2, markStepComplete } = useFormStore();
 
     const {
         register,
@@ -36,11 +37,19 @@ const Step1 = () => {
     const primaryRole = watch("primaryRole");
 
     const onSubmit = (data: Step1FormData) => {
+        // Create a copy and conditionally remove otherRoleDescription
         const submitData = { ...data };
         if (data.primaryRole !== "other") {
             delete submitData.otherRoleDescription;
         }
+
         updateStep1(submitData);
+
+        // Clear tech stack from step2 if user is no longer a developer
+        if (data.primaryRole !== "developer") {
+            updateStep2({ techStack: undefined });
+        }
+
         markStepComplete(1);
         navigate("/step/2");
     };
@@ -97,6 +106,7 @@ const Step1 = () => {
                     {errors.primaryRole && <p className="text-red-500 text-sm">{errors.primaryRole.message}</p>}
                 </div>
 
+                {/* Conditional Other Role Description */}
                 {primaryRole === "other" && (
                     <div className="space-y-2">
                         <Label htmlFor="otherRoleDescription">Please describe your role</Label>
